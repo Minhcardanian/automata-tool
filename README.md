@@ -1,25 +1,25 @@
-# Automata Simulator
+# 🧠 Automata Simulator
 
-A Python-based visual tool for simulating and converting finite automata (DFA/NFA with ε-transitions) with a user-friendly GUI using `ttkbootstrap`.
+A Python-based interactive visual tool for simulating and converting finite automata (DFA/NFA with ε-transitions) via a clean GUI using `ttkbootstrap`.
 
 ---
 
 ## ✨ Features
 
-- ✅ Load DFA or NFA (supports ε-transitions) from JSON format
-- 🔄 Automatically converts NFA → DFA using subset construction and epsilon-closure
-- 🔍 Test input strings for acceptance (full string or step-by-step)
-- 🪜 Step-by-step simulation with real-time state logs
-- 🧮 Renders DFA transition table in a readable format
-- 🌐 Visualizes DFA structure as a PNG graph
-- 🖥️ Responsive and scrollable UI built with `Tkinter` + `ttkbootstrap`
-- 🎓 Ideal for automata theory assignments and education
+- ✅ Load DFA or NFA (supports ε-transitions) from JSON format  
+- 🔄 Automatically convert NFA → DFA (subset construction + ε-closure)  
+- 🔍 Test input strings for acceptance (instant or step-by-step)  
+- 🪜 Step simulation with real-time state tracking log  
+- 🧮 Render readable DFA transition table  
+- 🌐 Visualize DFA structure as a graph (`dfa_graph.png`)  
+- 🖥️ Responsive GUI using modern `ttkbootstrap` theme  
+- 🎓 Built for educational use in automata theory  
 
 ---
 
 ## 📦 Installation
 
-Ensure you have Graphviz installed for graph rendering:
+Ensure Graphviz is installed for graph rendering:
 
 ```bash
 # Ubuntu/Debian
@@ -27,51 +27,61 @@ sudo apt install graphviz
 
 # macOS
 brew install graphviz
-Also install Python dependencies (if needed):
+```
 
-bash
-Copy
-Edit
+Install Python dependencies:
+
+```bash
 pip install -r requirements.txt
-▶️ Run the App
-bash
-Copy
-Edit
+```
+
+---
+
+## ▶️ Run the App
+
+```bash
 python ui/app.py
-📁 Folder Structure and File Functions
-graphql
-Copy
-Edit
+```
+
+---
+
+## 📁 Project Structure & File Functions
+
+```text
 automata_tools/
 ├── dfa/
-│   ├── dfa.py            # DFA class: handles states, transitions, and string acceptance logic
-│   ├── from_nfa.py       # Function to convert NFA (with ε) to DFA using subset construction
-│   ├── utils.py          # Prints DFA transition table in aligned tabular format
-│   └── visualize.py      # Uses Graphviz to render DFA as .png image
+│   ├── dfa.py            # DFA logic: transitions, acceptance check
+│   ├── from_nfa.py       # NFA → DFA conversion (ε-handling)
+│   ├── utils.py          # Helper: print DFA transition table
+│   └── visualize.py      # Uses Graphviz to export DFA as PNG
 │
 ├── nfa/
-│   └── nfa.py            # NFA class: handles ε-transitions, move and lambda-closure functions
+│   └── nfa.py            # NFA logic: ε-transitions, move, closure
 │
 ├── ui/
-│   └── app.py            # GUI Application: built using ttkbootstrap (modern Tkinter)
-│                         # Features:
-│                         # - Load and detect NFA/DFA
-│                         # - Test/Step input string
-│                         # - Render graph & show transition table
-│                         # - View execution log & clear UI
+│   └── app.py            # GUI (Tkinter + ttkbootstrap)
+│                         # - File loader
+│                         # - String testing / step sim
+│                         # - DFA graph + table viewer
 │
 ├── examples/
-│   ├── sample_dfa.json   # Example DFA input
-│   ├── complex_nfa.json  # Example NFA with ε-transitions
-│   └── *.json            # Your other test cases
+│   ├── sample_dfa.json   # Sample DFA definition
+│   ├── complex_nfa.json  # NFA with ε-transitions
+│   └── *.json            # Additional automata
 │
-└── README.md             # This file
-📂 JSON Input Format
-The application uses a JSON structure to represent automata. Here's a DFA sample:
+├── demo/
+│   └── *.png             # Screenshots / DFA graphs
+│
+└── README.md             # This documentation
+```
 
-json
-Copy
-Edit
+---
+
+## 📂 JSON Format
+
+Example DFA input:
+
+```json
 {
   "states": ["q0", "q1", "q2"],
   "alphabet": ["0", "1"],
@@ -83,71 +93,88 @@ Edit
   "start_state": "q0",
   "final_states": ["q2"]
 }
-For ε-transitions in NFAs, include "ε" as a key:
+```
 
-json
-Copy
-Edit
+For ε-transitions in NFAs, use:
+
+```json
 "q0": { "ε": ["q1", "q2"] }
-🧑‍💻 User Guide
+```
+
+---
+
+## 🧑‍💻 User Guide
+
 Run the app:
 
-bash
-Copy
-Edit
+```bash
 python ui/app.py
+```
+
 Use the left pane:
+- Select a `.json` file from the list (in `examples/`)
+- Click **Load Selected File**
 
-Select a .json file from the list (loaded from examples/)
+Input your string (e.g., `0101`) and use buttons:
+- 🔍 **Test Full String** – DFA acceptance instantly
+- 🪜 **Step Through** – one symbol at a time
+- 🌐 **Render DFA Graph** – shows image inline
+- ❌ **Clear All** – reset the interface
 
-Click Load Selected File to import the automaton
+The right pane shows:
+- 🖼 DFA graph
+- 📜 Execution log
+- 📋 DFA transition table
 
-Input your string (e.g., 0101)
+---
 
-Use the control buttons:
+## 📊 DFA Construction Architecture
 
-Test Full String – instantly check DFA acceptance
+```mermaid
+graph TD
+    A[Load JSON] --> B{Is NFA with ε?}
+    B -- Yes --> C[NFA → DFA (Subset Construction)]
+    B -- No --> D[Parse as DFA]
+    C --> E[Render DFA Graph]
+    D --> E
+    E --> F[Test Input / Step Sim]
+    F --> G[Show Table / Log / Graph]
+```
 
-Step Through – simulate symbol-by-symbol transition
+---
 
-Render DFA Graph – generate and show DFA as image
+## 📸 Screenshots
 
-Clear All – reset all fields and outputs
+```markdown
+![Main UI](demo/screenshot_ui.png)
+![Step Execution](demo/step_example.png)
+![Graph Output](demo/dfa_graph.png)
+```
 
-View results on the right:
+---
 
-🖼 DFA graph (PNG)
+## 🧪 Bonus / Testing Tips
 
-📜 Execution log
+- Add new `.json` files to the `examples/` folder
+- Try edge cases:
+  - Unreachable states
+  - ε-loops or nondeterminism
+  - Invalid characters
 
-📋 Transition table
+---
 
-📸 Screenshots
-Add screenshots here after capturing them during usage:
+## 🛠 Technical Highlights
 
-scss
-Copy
-Edit
-![Main GUI](demo/screenshot_ui.png)
-![Step Simulation](demo/step_example.png)
-🛠 Technical Notes
-Uses ttkbootstrap: a modern wrapper for ttk (supports themes, colors)
+- `ttkbootstrap` for a modern UI look
+- `graphviz` to visualize DFA state machines
+- `Pillow` (PIL) to render graph image inside GUI
+- Automatic detection of DFA/NFA
+- Modular core logic, usable outside GUI
 
-Uses Pillow to embed images (PNG) inside the GUI
+---
 
-GUI supports interactive exploration of automata behavior
+## 📜 License
 
-Detects DFA vs. NFA format based on ε-transitions automatically
-
-Conversion and logic are fully modular (usable via CLI if desired)
-
-🧪 Bonus / Testing Tips
-You can add more test files to the examples/ folder
-
-Use edge cases like unreachable states, nondeterministic transitions, or ε-loops
-
-Consider printing or asserting behavior for known accepted/rejected strings
-
-📜 License
-MIT License — Developed by Bui Quang Minh
-Vietnamese-German University | Student ID: 10423075
+**MIT License**  
+Developed by **Bui Quang Minh**  
+Vietnamese-German University | Student ID: `10423075`
