@@ -130,10 +130,10 @@ The right pane shows:
 
 ## 📊 DFA Construction Architecture
 
-```mermaid
+````mermaid
 graph TD
-    A[Load JSON] --> B{Is NFA with ε?}
-    B -- Yes --> C[NFA → DFA (Subset Construction)]
+    A[Load JSON] --> B{Is NFA with epsilon?}
+    B -- Yes --> C[NFA to DFA (Subset Construction)]
     B -- No --> D[Parse as DFA]
     C --> E[Render DFA Graph]
     D --> E
