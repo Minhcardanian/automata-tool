@@ -1,0 +1,8 @@
+{
+    "states": ["q0"],
+    "alphabet": ["0","1"],
+    "transition": { "q0": {} },
+    "start_state": "q0",
+    "final_states": ["q0"]
+  }
+  

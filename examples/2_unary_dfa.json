@@ -1,0 +1,11 @@
+{
+    "states": ["s_even", "s_odd"],
+    "alphabet": ["a"],
+    "transition": {
+      "s_even": { "a": ["s_odd"] },
+      "s_odd":  { "a": ["s_even"] }
+    },
+    "start_state": "s_even",
+    "final_states": ["s_even"]
+  }
+  
