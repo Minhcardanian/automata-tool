@@ -217,4 +217,4 @@ flowchart TD
 
 **MIT License**  
 Developed by **Bui Quang Minh**  
-Vietnamese-German University | Student ID: `10423075`
+Vietnamese-German University | Course: CSE2023
