@@ -173,6 +173,46 @@ graph TD
 
 ---
 
+## 📊 Master Architecture
+``` mermaid
+flowchart TD
+    Start([Start: User loads JSON]) --> CheckType{Is automaton DFA or NFA?}
+    CheckType -- "NFA" --> SubsetStart
+    CheckType -- "DFA" --> AcceptStart
+
+    subgraph NFA_to_DFA_Subset_Construction [NFA→DFA Subset Construction]
+      SubsetStart([Epsilon closure of start state])
+      SubsetStart --> AddQ[Add start set to queue]
+      AddQ --> QNotEmpty{Queue not empty?}
+      QNotEmpty -- "Yes" --> PopSet[Pop state set from queue]
+      PopSet --> ForSymb[For each symbol in alphabet]
+      ForSymb --> NextSet[Compute next set via transitions & epsilon-closure]
+      NextSet --> InMap{Next set in state map?}
+      InMap -- "No" --> NewName[Assign new name, add to queue]
+      InMap -- "Yes" --> CreateTrans[Create transition in DFA]
+      NextSet --> AnyFinal{Any state in next set final?}
+      AnyFinal -- "Yes" --> AddFinal[Add to DFA final states]
+      AnyFinal -- "No" --> Continue
+      QNotEmpty -- "No" --> ToAccept[Done: use DFA]
+    end
+    ToAccept --> AcceptStart
+
+    subgraph DFA_Accept_Function [DFA Accept Function]
+      AcceptStart([Start at DFA start state])
+      AcceptStart --> ForSym[For each symbol in input]
+      ForSym --> Valid{Valid symbol & transition?}
+      Valid -- "Not in alphabet" --> Err1[Error: Invalid input]
+      Valid -- "Transition missing" --> RetF[Return FALSE]
+      Valid -- "Valid" --> Move[Move to next state]
+      Move --> ForSym
+      ForSym --> EndInput[End of input]
+      EndInput --> IsFinal{Current state in final state?}
+      IsFinal -- "Yes" --> TrueR[Return TRUE]
+      IsFinal -- "No" --> FalseR[Return FALSE]
+    end
+
+```
+
 ## 📜 License
 
 **MIT License**  
