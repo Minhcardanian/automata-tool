@@ -36,6 +36,7 @@ class AutomataApp:
         self.current_index = 0
         self.current_state = None
         self.highlight_edges = None
+        self.highlight_nodes = None
 
         self.build_gui()
 
@@ -120,6 +121,7 @@ class AutomataApp:
             self.input_string = ""
             self.current_state = self.dfa.start_state
             self.highlight_edges = None
+            self.highlight_nodes = None
             self.alphabet_label.config(text=f"Valid alphabet: {', '.join(self.dfa.alphabet)}")
             self.result_label.config(text="")
             self.log_text.delete('1.0', ttk.END)
@@ -168,10 +170,16 @@ class AutomataApp:
             symbol = self.input_string[self.current_index]
             try:
                 next_state = self.dfa.transition[self.current_state][symbol]
-                # highlight the current edge
+                # highlight the current edge and node
                 self.highlight_edges = [(self.current_state, symbol)]
-                # redraw graph with highlighted edge
-                visualize_dfa(self.dfa, view=False, highlight_edges=self.highlight_edges)
+                self.highlight_nodes = [next_state]
+                # redraw graph with highlights
+                visualize_dfa(
+                    self.dfa,
+                    view=False,
+                    highlight_edges=self.highlight_edges,
+                    highlight_nodes=self.highlight_nodes
+                )
                 self._load_graph_image()
                 self.log_text.insert(tk.END, f"Step {self.current_index + 1}: {self.current_state} --'{symbol}'--> {next_state}\n")
                 self.current_state = next_state
@@ -189,7 +197,12 @@ class AutomataApp:
         if not self.dfa:
             messagebox.showwarning("Warning", "No DFA to render.")
             return
-        visualize_dfa(self.dfa, view=False, highlight_edges=self.highlight_edges)
+        visualize_dfa(
+            self.dfa,
+            view=False,
+            highlight_edges=self.highlight_edges,
+            highlight_nodes=[self.current_state] if self.current_state else None
+        )
         self._load_graph_image()
 
     def _load_graph_image(self):

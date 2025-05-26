@@ -1,6 +1,6 @@
 from graphviz import Digraph
 
-def visualize_dfa(dfa, filename="dfa_graph", view=False, highlight_edges=None):
+def visualize_dfa(dfa, filename="dfa_graph", view=False, highlight_edges=None, highlight_nodes=None):
     """
     Render the given DFA to a PNG file using Graphviz.
 
@@ -9,27 +9,35 @@ def visualize_dfa(dfa, filename="dfa_graph", view=False, highlight_edges=None):
         filename: output filename (without extension)
         view: whether to open the image after rendering
         highlight_edges: optional list of (src_state, symbol) tuples to draw in red
+        highlight_nodes: optional list of state names to fill with color
     """
     dot = Digraph(format="png")
     dot.attr(rankdir="LR")
+
+    highlight_edges = highlight_edges or []
+    highlight_nodes = set(highlight_nodes or [])
 
     # Draw start arrow
     dot.node("", shape="none")
     dot.edge("", dfa.start_state)
 
-    # Draw states
+    # Draw states (doublecircle for finals, fill for current)
     for state in dfa.states:
-        shape = "doublecircle" if state in dfa.final_states else "circle"
-        dot.node(state, shape=shape)
+        attrs = {}
+        attrs['shape'] = "doublecircle" if state in dfa.final_states else "circle"
+        if state in highlight_nodes:
+            attrs['style'] = 'filled'
+            attrs['fillcolor'] = 'lightpink'
+        dot.node(state, **attrs)
 
-    # Draw transitions, highlighting if requested
+    # Draw transitions (red + bold for highlighted edges)
     for src, transitions in dfa.transition.items():
         for symbol, dst in transitions.items():
-            attrs = {}
-            if highlight_edges and (src, symbol) in highlight_edges:
-                attrs['color'] = 'red'
-                attrs['penwidth'] = '2'
-            dot.edge(src, dst, label=symbol, **attrs)
+            edge_attrs = {}
+            if (src, symbol) in highlight_edges:
+                edge_attrs['color'] = 'red'
+                edge_attrs['penwidth'] = '2'
+            dot.edge(src, dst, label=symbol, **edge_attrs)
 
     # Render to file
     output_path = dot.render(filename, cleanup=True, view=view)
