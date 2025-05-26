@@ -128,9 +128,8 @@ graph TD
 
 ## Screenshots
 
-![Main UI](demo/screenshot_ui.png)
-![Step Execution](demo/step_example.png)
-![Graph Output](demo/dfa_graph.png)
+![Sample](demo/img_sample.png)
+
 
 ## Testing Tips
 
