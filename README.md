@@ -96,6 +96,10 @@ Use `"ε"` for epsilon transitions:
 ```
 
 ## User Guide
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
 
 ```bash
 python ui/app.py
