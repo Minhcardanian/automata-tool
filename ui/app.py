@@ -1,3 +1,4 @@
+import tkinter as tk
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from tkinter import filedialog, messagebox, scrolledtext, Listbox
@@ -34,6 +35,7 @@ class AutomataApp:
         self.input_string = ""
         self.current_index = 0
         self.current_state = None
+        self.highlight_edges = None
 
         self.build_gui()
 
@@ -103,44 +105,26 @@ class AutomataApp:
             with open(path, 'r') as f:
                 data = json.load(f)
 
-            transition = {
-                state: {symbol: set(targets) for symbol, targets in trans.items()}
-                for state, trans in data["transition"].items()
-            }
+            transition = {state: {symbol: set(targets) for symbol, targets in trans.items()} for state, trans in data["transition"].items()}
 
             if any(symbol == 'ε' for trans in transition.values() for symbol in trans):
-                nfa = NFA(
-                    states=set(data["states"]),
-                    alphabet=set(data["alphabet"]),
-                    transition=transition,
-                    start_state=data["start_state"],
-                    final_states=set(data["final_states"])
-                )
+                nfa = NFA(states=set(data["states"]), alphabet=set(data["alphabet"]), transition=transition, start_state=data["start_state"], final_states=set(data["final_states"]))
                 self.dfa = nfa_to_dfa(nfa)
                 messagebox.showinfo("Info", f"NFA loaded from '{filename}' and converted to DFA.")
             else:
-                dfa_transition = {
-                    state: {symbol: list(targets)[0] for symbol, targets in trans.items()}
-                    for state, trans in transition.items()
-                }
-                self.dfa = DFA(
-                    states=set(data["states"]),
-                    alphabet=set(data["alphabet"]),
-                    transition=dfa_transition,
-                    start_state=data["start_state"],
-                    final_states=set(data["final_states"])
-                )
+                dfa_transition = {state: {symbol: list(targets)[0] for symbol, targets in trans.items()} for state, trans in transition.items()}
+                self.dfa = DFA(states=set(data["states"]), alphabet=set(data["alphabet"]), transition=dfa_transition, start_state=data["start_state"], final_states=set(data["final_states"]))
                 messagebox.showinfo("Info", f"DFA loaded from '{filename}'.")
 
             self.current_index = 0
             self.input_string = ""
             self.current_state = self.dfa.start_state
+            self.highlight_edges = None
             self.alphabet_label.config(text=f"Valid alphabet: {', '.join(self.dfa.alphabet)}")
             self.result_label.config(text="")
             self.log_text.delete('1.0', ttk.END)
             self.table_text.delete('1.0', ttk.END)
             self.capture_transition_table()
-
         except Exception as e:
             messagebox.showerror("Error", f"Failed to load file: {e}")
 
@@ -176,17 +160,20 @@ class AutomataApp:
         if not self.dfa:
             messagebox.showwarning("Warning", "Please load a DFA or NFA first.")
             return
-
         if self.current_index == 0:
             self.input_string = self.input_entry.get().strip()
             self.current_state = self.dfa.start_state
             self.log_text.delete('1.0', ttk.END)
-
         if self.current_index < len(self.input_string):
             symbol = self.input_string[self.current_index]
             try:
                 next_state = self.dfa.transition[self.current_state][symbol]
-                self.log_text.insert(ttk.END, f"Step {self.current_index + 1}: {self.current_state} --'{symbol}'--> {next_state}\n")
+                # highlight the current edge
+                self.highlight_edges = [(self.current_state, symbol)]
+                # redraw graph with highlighted edge
+                visualize_dfa(self.dfa, view=False, highlight_edges=self.highlight_edges)
+                self._load_graph_image()
+                self.log_text.insert(tk.END, f"Step {self.current_index + 1}: {self.current_state} --'{symbol}'--> {next_state}\n")
                 self.current_state = next_state
                 self.current_index += 1
             except KeyError:
@@ -195,15 +182,17 @@ class AutomataApp:
         else:
             accepted = self.current_state in self.dfa.final_states
             self.result_label.config(text="✅ Accepted" if accepted else "❌ Rejected", foreground="green" if accepted else "red")
-            self.log_text.insert(ttk.END, f"[CURRENT STATE] {self.current_state}\n")
+            self.log_text.insert(tk.END, f"[CURRENT STATE] {self.current_state}\n")
             self.current_index = 0
 
     def render_graph(self):
         if not self.dfa:
             messagebox.showwarning("Warning", "No DFA to render.")
             return
+        visualize_dfa(self.dfa, view=False, highlight_edges=self.highlight_edges)
+        self._load_graph_image()
 
-        visualize_dfa(self.dfa, view=False)
+    def _load_graph_image(self):
         try:
             img = Image.open("dfa_graph.png")
             max_width, max_height = 600, 400
