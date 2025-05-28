@@ -5,7 +5,6 @@
 *"Flexible automata tasking"*
 
 ![Last Commit](https://img.shields.io/github/last-commit/Minhcardanian/automata-tool)
-![Language](https://img.shields.io/github/languages/top/Minhcardanian/automata-tool)
 ![Python](https://img.shields.io/badge/python-99.5%25-blue)
 ![License](https://img.shields.io/github/license/Minhcardanian/automata-tool)
 
