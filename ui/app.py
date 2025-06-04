@@ -15,6 +15,7 @@ from dfa.from_nfa import nfa_to_dfa
 from dfa.utils import print_dfa_table
 from dfa.visualize import visualize_dfa
 from nfa.nfa import NFA
+from main import is_probably_nfa
 
 class AutomataApp:
     def __init__(self, root):
@@ -118,7 +119,7 @@ class AutomataApp:
                 s:{sym:set(tgt) for sym,tgt in m.items()} for s,m in data["transition"].items()
             }
             # detect NFA
-            if any(sym=='ε' for m in trans.values() for sym in m):
+            if is_probably_nfa(path):
                 nfa = NFA(
                     states=set(data["states"]),
                     alphabet=set(data["alphabet"]),
