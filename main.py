@@ -33,7 +33,7 @@ def load_nfa_from_json(path):
     )
 
 def is_probably_nfa(path):
-        """Return True if the automaton JSON likely describes an NFA.
+    """Return True if the automaton JSON likely describes an NFA.
     Detection is based on the presence of epsilon transitions or any
     transition where a symbol leads to more than one possible state.
     """
