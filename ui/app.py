@@ -159,7 +159,10 @@ class AutomataApp:
                 data = json.load(f)
             # build transition
             trans = {
-                s: {sym: set(tgt) for sym, tgt in m.items()}
+                s: {
+                    sym: set(tgt if isinstance(tgt, list) else [tgt])
+                    for sym, tgt in m.items()
+                }
                 for s, m in data["transition"].items()
             }
             # detect NFA
