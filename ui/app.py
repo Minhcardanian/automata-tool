@@ -1,17 +1,18 @@
 import tkinter as tk
 import ttkbootstrap as ttk
-from ttkbootstrap.constants import *
-from tkinter import messagebox, scrolledtext, Listbox
+from ttkbootstrap.constants import HORIZONTAL, LEFT, VERTICAL
+from tkinter import Listbox, messagebox, scrolledtext
 from PIL import Image, ImageTk
 import json
 import os
 import sys
 
-# allow imports from parent
-sys.path.insert(
-    0,
-    os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-)
+if __name__ == "__main__" and __package__ is None:
+    sys.path.insert(
+        0,
+        os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    )
+
 
 from dfa.dfa import DFA
 from dfa.from_nfa import nfa_to_dfa
@@ -27,7 +28,9 @@ class AutomataApp:
         self.root.configure(bg="#f9f9f9")
 
         # base paths
-        self.base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+        self.base_dir = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..")
+        )
         self.examples_dir = os.path.join(self.base_dir, 'examples')
         self.graph_path = os.path.join(self.base_dir, 'dfa_graph.png')
 
@@ -76,10 +79,17 @@ class AutomataApp:
             command=self.load_selected_file
         ).pack(side=LEFT, padx=8)
 
-        ttk.Label(self.ctrl_frame, text="Enter input string:").pack(anchor="w", pady=(0, 2))
+        ttk.Label(
+            self.ctrl_frame,
+            text="Enter input string:"
+        ).pack(anchor="w", pady=(0, 2))
         self.input_entry = ttk.Entry(self.ctrl_frame)
         self.input_entry.pack(fill="x", pady=(0, 8))
-        self.alphabet_label = ttk.Label(self.ctrl_frame, text="", font=("Arial", 9))
+        self.alphabet_label = ttk.Label(
+            self.ctrl_frame,
+            text="",
+            font=("Arial", 9)
+        )
         self.alphabet_label.pack(anchor="w", pady=(0, 12))
 
         ttk.Button(
@@ -94,7 +104,11 @@ class AutomataApp:
             bootstyle="primary",
             command=self.step_through
         ).pack(fill="x", pady=4)
-        self.result_label = ttk.Label(self.ctrl_frame, text="", font=("Arial", 14, "bold"))
+        self.result_label = ttk.Label(
+            self.ctrl_frame,
+            text="",
+            font=("Arial", 14, "bold")
+        )
         self.result_label.pack(pady=10)
         ttk.Button(
             self.ctrl_frame,
@@ -175,7 +189,10 @@ class AutomataApp:
                     final_states=set(data["final_states"])
                 )
                 self.dfa = nfa_to_dfa(nfa)
-                messagebox.showinfo("Info", f"NFA → DFA loaded from '{fname}'.")
+                messagebox.showinfo(
+                    "Info",
+                    f"NFA → DFA loaded from '{fname}'."
+                )
             else:
                 dfa_trans = {
                     s: {sym: list(tgt)[0] for sym, tgt in m.items()}
@@ -299,7 +316,7 @@ class AutomataApp:
 
     def render_graph(self):
         if not self.dfa:
-            messagebox.showwarning("Warning","No DFA to render."); 
+            messagebox.showwarning("Warning", "No DFA to render.")
             return
         
         visualize_dfa(
@@ -307,7 +324,9 @@ class AutomataApp:
             view=False,
             filename=self.graph_path[:-4],
             highlight_edges=self.highlight_edges,
-            highlight_nodes=[self.current_state] if self.current_state else None
+            highlight_nodes=(
+                [self.current_state] if self.current_state else None
+            )
         )
         self._load_graph_image()
 
@@ -320,6 +339,7 @@ class AutomataApp:
             self.image_label.image = tkimg
         except Exception as e:
             messagebox.showerror("Error", f"Failed to load image: {e}")
+
 
 if __name__ == "__main__":
     root = ttk.Window(themename="flatly")
