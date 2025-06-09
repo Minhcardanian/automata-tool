@@ -8,7 +8,10 @@ import os
 import sys
 
 # allow imports from parent
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(
+    0,
+    os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+)
 
 from dfa.dfa import DFA
 from dfa.from_nfa import nfa_to_dfa
@@ -22,6 +25,11 @@ class AutomataApp:
         self.root = root
         self.root.title("Automata Simulator")
         self.root.configure(bg="#f9f9f9")
+
+        # base paths
+        self.base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+        self.examples_dir = os.path.join(self.base_dir, 'examples')
+        self.graph_path = os.path.join(self.base_dir, 'dfa_graph.png')
 
         # ---- outer horizontal pane: controls | right_pane ----
         self.h_pane = ttk.PanedWindow(root, orient=HORIZONTAL)
@@ -56,44 +64,78 @@ class AutomataApp:
     def build_gui(self):
         # --- Controls (in ctrl_frame) ---
         lf = ttk.LabelFrame(self.ctrl_frame, text="File Loader")
-        lf.pack(fill="x", pady=(5,10))
+        lf.pack(fill="x", pady=(5, 10))
         ttk.Label(lf, text="Select JSON file:").pack(side=LEFT, padx=5)
         self.file_list = Listbox(lf, height=5, width=28)
         self.file_list.pack(side=LEFT)
         self.populate_file_list()
-        ttk.Button(lf, text="Load Selected File", bootstyle="primary",
-                   command=self.load_selected_file).pack(side=LEFT, padx=8)
+        ttk.Button(
+            lf,
+            text="Load Selected File",
+            bootstyle="primary",
+            command=self.load_selected_file
+        ).pack(side=LEFT, padx=8)
 
-        ttk.Label(self.ctrl_frame, text="Enter input string:").pack(anchor="w", pady=(0,2))
+        ttk.Label(self.ctrl_frame, text="Enter input string:").pack(anchor="w", pady=(0, 2))
         self.input_entry = ttk.Entry(self.ctrl_frame)
-        self.input_entry.pack(fill="x", pady=(0,8))
-        self.alphabet_label = ttk.Label(self.ctrl_frame, text="", font=("Arial",9))
-        self.alphabet_label.pack(anchor="w", pady=(0,12))
+        self.input_entry.pack(fill="x", pady=(0, 8))
+        self.alphabet_label = ttk.Label(self.ctrl_frame, text="", font=("Arial", 9))
+        self.alphabet_label.pack(anchor="w", pady=(0, 12))
 
-        ttk.Button(self.ctrl_frame, text="Test Full String", bootstyle="primary",
-                   command=self.test_input).pack(fill="x", pady=4)
-        ttk.Button(self.ctrl_frame, text="Step Through", bootstyle="primary",
-                   command=self.step_through).pack(fill="x", pady=4)
-        self.result_label = ttk.Label(self.ctrl_frame, text="", font=("Arial",14,"bold"))
+        ttk.Button(
+            self.ctrl_frame,
+            text="Test Full String",
+            bootstyle="primary",
+            command=self.test_input
+        ).pack(fill="x", pady=4)
+        ttk.Button(
+            self.ctrl_frame,
+            text="Step Through",
+            bootstyle="primary",
+            command=self.step_through
+        ).pack(fill="x", pady=4)
+        self.result_label = ttk.Label(self.ctrl_frame, text="", font=("Arial", 14, "bold"))
         self.result_label.pack(pady=10)
-        ttk.Button(self.ctrl_frame, text="Render DFA Graph", bootstyle="primary",
-                   command=self.render_graph).pack(fill="x", pady=(0,8))
+        ttk.Button(
+            self.ctrl_frame,
+            text="Render DFA Graph",
+            bootstyle="primary",
+            command=self.render_graph
+        ).pack(fill="x", pady=(0, 8))
 
         # --- Logs & Table (in log_frame) ---
-        ttk.Label(self.log_frame, text="Execution Log:", font=("Arial",10,"bold")) \
-            .pack(anchor="w", padx=5, pady=(5,2))
-        self.log_text = scrolledtext.ScrolledText(self.log_frame,
-            height=6, width=60, bg="#fff")
-        self.log_text.pack(fill="both", expand=False, padx=5, pady=(0,8))
+        ttk.Label(
+            self.log_frame,
+            text="Execution Log:",
+            font=("Arial", 10, "bold")
+        ).pack(anchor="w", padx=5, pady=(5, 2))
+        self.log_text = scrolledtext.ScrolledText(
+            self.log_frame,
+            height=6,
+            width=60,
+            bg="#fff"
+        )
+        self.log_text.pack(fill="both", expand=False, padx=5, pady=(0, 8))
 
-        ttk.Label(self.log_frame, text="Transition Table:", font=("Arial",10,"bold")) \
-            .pack(anchor="w", padx=5, pady=(0,2))
-        self.table_text = scrolledtext.ScrolledText(self.log_frame,
-            height=8, width=60, bg="#fff")
-        self.table_text.pack(fill="both", expand=False, padx=5, pady=(0,8))
+        ttk.Label(
+            self.log_frame,
+            text="Transition Table:",
+            font=("Arial", 10, "bold")
+        ).pack(anchor="w", padx=5, pady=(0, 2))
+        self.table_text = scrolledtext.ScrolledText(
+            self.log_frame,
+            height=8,
+            width=60,
+            bg="#fff"
+        )
+        self.table_text.pack(fill="both", expand=False, padx=5, pady=(0, 8))
 
-        ttk.Button(self.log_frame, text="Clear All", bootstyle="danger",
-                   command=self.clear_all).pack(anchor="e", padx=5, pady=(0,5))
+        ttk.Button(
+            self.log_frame,
+            text="Clear All",
+            bootstyle="danger",
+            command=self.clear_all
+        ).pack(anchor="e", padx=5, pady=(0, 5))
 
         # --- Graph (in graph_frame) ---
         self.image_label = ttk.Label(self.graph_frame)
@@ -101,22 +143,24 @@ class AutomataApp:
 
     def populate_file_list(self):
         self.file_list.delete(0, tk.END)
-        for f in os.listdir("examples"):
+        for f in os.listdir(self.examples_dir):
             if f.endswith(".json"):
                 self.file_list.insert(tk.END, f)
 
     def load_selected_file(self):
         sel = self.file_list.curselection()
         if not sel:
-            messagebox.showwarning("Warning","No file selected."); return
+            messagebox.showwarning("Warning", "No file selected.")
+            return
         fname = self.file_list.get(sel[0])
-        path = os.path.join("examples", fname)
+        path = os.path.join(self.examples_dir, fname)
         try:
             with open(path) as f:
                 data = json.load(f)
             # build transition
             trans = {
-                s:{sym:set(tgt) for sym,tgt in m.items()} for s,m in data["transition"].items()
+                s: {sym: set(tgt) for sym, tgt in m.items()}
+                for s, m in data["transition"].items()
             }
             # detect NFA
             if is_probably_nfa(path):
@@ -131,7 +175,8 @@ class AutomataApp:
                 messagebox.showinfo("Info", f"NFA → DFA loaded from '{fname}'.")
             else:
                 dfa_trans = {
-                    s:{sym:list(tgt)[0] for sym,tgt in m.items()} for s,m in trans.items()
+                    s: {sym: list(tgt)[0] for sym, tgt in m.items()}
+                    for s, m in trans.items()
                 }
                 self.dfa = DFA(
                     states=set(data["states"]),
@@ -146,7 +191,9 @@ class AutomataApp:
             self.current_state = self.dfa.start_state
             self.highlight_edges = None
             self.highlight_nodes = None
-            self.alphabet_label.config(text=f"Valid alphabet: {', '.join(self.dfa.alphabet)}")
+            self.alphabet_label.config(
+                text=f"Valid alphabet: {', '.join(self.dfa.alphabet)}"
+            )
             self.result_label.config(text="")
             self.log_text.delete("1.0", tk.END)
             self.table_text.delete("1.0", tk.END)
@@ -155,9 +202,11 @@ class AutomataApp:
             messagebox.showerror("Error", f"Failed to load: {e}")
 
     def capture_transition_table(self):
-        import io, sys as _sys
+        import io
+        import sys as _sys
         buf = io.StringIO()
-        old = _sys.stdout; _sys.stdout = buf
+        old = _sys.stdout
+        _sys.stdout = buf
         print_dfa_table(self.dfa)
         _sys.stdout = old
         self.table_text.insert(tk.END, buf.getvalue())
@@ -171,24 +220,30 @@ class AutomataApp:
 
     def test_input(self):
         if not self.dfa:
-            messagebox.showwarning("Warning","Load an automaton first."); return
+            messagebox.showwarning("Warning", "Load an automaton first.")
+            return
         s = self.input_entry.get().strip()
         # invalid-symbol check
         for ch in s:
             if ch not in self.dfa.alphabet:
-                self.result_label.config(text=f"Error: '{ch}' not in alphabet",
-                                         foreground="orange")
+                self.result_label.config(
+                    text=f"Error: '{ch}' not in alphabet",
+                    foreground="orange"
+                )
                 return
         try:
             ok = self.dfa.accepts(s)
-            self.result_label.config(text="✅ Accepted" if ok else "❌ Rejected",
-                                     foreground="green" if ok else "red")
+            self.result_label.config(
+                text="✅ Accepted" if ok else "❌ Rejected",
+                foreground="green" if ok else "red"
+            )
         except Exception as e:
             self.result_label.config(text=f"Error: {e}", foreground="orange")
 
     def step_through(self):
         if not self.dfa:
-            messagebox.showwarning("Warning","Load an automaton first."); return
+            messagebox.showwarning("Warning", "Load an automaton first.")
+            return
         if self.current_index == 0:
             self.input_string = self.input_entry.get().strip()
             self.current_state = self.dfa.start_state
@@ -200,14 +255,17 @@ class AutomataApp:
                 self.highlight_edges = [(self.current_state, sym)]
                 self.highlight_nodes = [nxt]
                 visualize_dfa(
-                    self.dfa, view=False,
+                    self.dfa,
+                    view=False,
+                    filename=self.graph_path[:-4],
                     highlight_edges=self.highlight_edges,
                     highlight_nodes=self.highlight_nodes
                 )
                 self._load_graph_image()
                 self.log_text.insert(
                     tk.END,
-                    f"Step {self.current_index+1}: {self.current_state} --'{sym}'--> {nxt}\n"
+                    f"Step {self.current_index+1}: "
+                    f"{self.current_state} --'{sym}'--> {nxt}\n"
                 )
                 self.current_state = nxt
                 self.current_index += 1
@@ -218,16 +276,24 @@ class AutomataApp:
                 )
         else:
             fin = self.current_state in self.dfa.final_states
-            self.result_label.config(text="✅ Accepted" if fin else "❌ Rejected",
-                                     foreground="green" if fin else "red")
-            self.log_text.insert(tk.END, f"[CURRENT STATE] {self.current_state}\n")
+            self.result_label.config(
+                text="✅ Accepted" if fin else "❌ Rejected",
+                foreground="green" if fin else "red"
+            )
+            self.log_text.insert(
+                tk.END,
+                f"[CURRENT STATE] {self.current_state}\n"
+            )
             self.current_index = 0
 
     def render_graph(self):
         if not self.dfa:
-            messagebox.showwarning("Warning","No DFA to render."); return
+            messagebox.showwarning("Warning", "No DFA to render.")
+            return
         visualize_dfa(
-            self.dfa, view=False,
+            self.dfa,
+            view=False,
+            filename=self.graph_path[:-4],
             highlight_edges=self.highlight_edges,
             highlight_nodes=[self.current_state] if self.current_state else None
         )
@@ -235,15 +301,15 @@ class AutomataApp:
 
     def _load_graph_image(self):
         try:
-            img = Image.open("dfa_graph.png")
-            img.thumbnail((800,400), Image.Resampling.LANCZOS)
+            img = Image.open(self.graph_path)
+            img.thumbnail((800, 400), Image.Resampling.LANCZOS)
             tkimg = ImageTk.PhotoImage(img)
             self.image_label.config(image=tkimg)
             self.image_label.image = tkimg
         except Exception as e:
             messagebox.showerror("Error", f"Failed to load image: {e}")
 
-if __name__=="__main__":
+if __name__ == "__main__":
     root = ttk.Window(themename="flatly")
     AutomataApp(root)
     root.mainloop()
