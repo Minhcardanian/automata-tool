@@ -220,6 +220,11 @@ class AutomataApp:
         self.log_text.delete("1.0", tk.END)
         self.table_text.delete("1.0", tk.END)
         self.image_label.config(image='')
+        self.image_label.image = None
+        self.current_index = 0
+        self.current_state = self.dfa.start_state if self.dfa else None
+        self.highlight_edges = None
+        self.highlight_nodes = None
 
     def test_input(self):
         if not self.dfa:
