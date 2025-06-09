@@ -269,27 +269,31 @@ class AutomataApp:
                 )
                 self.current_state = nxt
                 self.current_index += 1
+                if self.current_index == len(self.input_string):
+                    self._finish_run()
             except KeyError:
                 self.result_label.config(
                     text=f"Error: '{sym}' not valid from {self.current_state}",
                     foreground="orange"
                 )
         else:
-            fin = self.current_state in self.dfa.final_states
-            self.result_label.config(
-                text="✅ Accepted" if fin else "❌ Rejected",
-                foreground="green" if fin else "red"
-            )
-            self.log_text.insert(
-                tk.END,
-                f"[CURRENT STATE] {self.current_state}\n"
-            )
-            self.current_index = 0
+            self._finish_run()
+
+    def _finish_run(self):
+        fin = self.current_state in self.dfa.final_states
+        self.result_label.config(
+            text="✅ Accepted" if fin else "❌ Rejected",
+            foreground="green" if fin else "red"
+        )
+        self.log_text.insert(tk.END, f"[CURRENT STATE] {self.current_state}\n")
+        self.current_index = 0
+        self.render_graph()
 
     def render_graph(self):
         if not self.dfa:
-            messagebox.showwarning("Warning", "No DFA to render.")
+            messagebox.showwarning("Warning","No DFA to render."); 
             return
+        
         visualize_dfa(
             self.dfa,
             view=False,
