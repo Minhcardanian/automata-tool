@@ -341,7 +341,15 @@ class AutomataApp:
             messagebox.showerror("Error", f"Failed to load image: {e}")
 
 
-if __name__ == "__main__":
+def main():
     root = ttk.Window(themename="flatly")
     AutomataApp(root)
-    root.mainloop()
+    root.protocol("WM_DELETE_WINDOW", root.quit)
+    try:
+        root.mainloop()
+    finally:
+        root.destroy()
+
+
+if __name__ == "__main__":
+    main()
