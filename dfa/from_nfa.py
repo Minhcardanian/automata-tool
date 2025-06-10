@@ -33,6 +33,9 @@ def nfa_to_dfa(nfa):
     state_map = {}  # frozenset → state name
     state_count = 0
 
+    dead_state = "DEAD"
+    dead_needed = False
+
     while unmarked:
         current = unmarked.pop()
         if current not in state_map:
@@ -51,6 +54,8 @@ def nfa_to_dfa(nfa):
             closure_set = epsilon_closure(nfa, move_set)
 
             if not closure_set:
+                dfa_transitions[current_name][symbol] = dead_state
+                dead_needed = True
                 continue
 
             closure_frozen = frozenset(closure_set)
@@ -67,8 +72,12 @@ def nfa_to_dfa(nfa):
         if any(s in nfa.final_states for s in subset):
             dfa_final_states.add(name)
 
+    if dead_needed:
+        dfa_states.add(dead_state)
+        dfa_transitions[dead_state] = {sym: dead_state for sym in nfa.alphabet if sym != 'ε'}
+
     return DFA(
-        states=set(state_map.values()),
+        states=dfa_states,
         alphabet={s for s in nfa.alphabet if s != 'ε'},
         transition=dfa_transitions,
         start_state=state_map[frozenset(start_closure)],
