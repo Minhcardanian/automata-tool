@@ -21,6 +21,23 @@
 * GUI with modern `ttkbootstrap` theme
 * Designed for learning and teaching automata theory
 
+## Environment Configuration
+
+Ensure **Python 3.10** or newer is available on your system. Create and
+activate a virtual environment before installing dependencies:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+Graph rendering depends on the Graphviz toolkit (see below for install
+instructions). After installing Graphviz, install the Python packages:
+
+```bash
+pip install -r requirements.txt
+```
+
 ## Installation
 
 > Graph rendering requires Graphviz
@@ -94,27 +111,23 @@ Use `"ε"` for epsilon transitions:
 "q0": { "ε": ["q1", "q2"] }
 ```
 
-## User Guide
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
+## User Workflow
 
-```bash
-python ui/app.py
-```
+1. Configure the environment and install dependencies as shown above.
+2. Launch the GUI:
 
-* Load `.json` from `examples/`
-* **Test Full String** – evaluate entire string
-* **Step Through** – simulate one input at a time
-* **Render DFA Graph** – generate visual
-* **Clear All** – reset UI
+   ```bash
+   python ui/app.py
+   ```
 
-Right panel displays:
+3. Use the interface to:
+   * Load `.json` examples
+   * **Test Full String** – evaluate entire strings
+   * **Step Through** – simulate one input at a time
+   * **Render DFA Graph** – create a visualization
+   * **Clear All** – reset the UI
 
-* DFA graph
-* Execution log
-* Transition table
+The right panel shows the DFA graph, execution log and transition table.
 
 ## DFA Construction Flow
 
