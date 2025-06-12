@@ -26,3 +26,13 @@ class NFA:
                         closure.add(next_state)
                         stack.append(next_state)
         return closure
+
+    def accepts(self, input_string):
+        """Return True if the NFA accepts the given string."""
+        current_states = self.lambda_closure({self.start_state})
+        for symbol in input_string:
+            if symbol not in self.alphabet:
+                raise ValueError(f"Symbol '{symbol}' not in NFA alphabet.")
+            next_states = self.move(current_states, symbol)
+            current_states = self.lambda_closure(next_states)
+        return any(s in self.final_states for s in current_states)
