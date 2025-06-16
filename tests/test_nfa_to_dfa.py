@@ -183,5 +183,5 @@ if __name__ == "__main__":
     import pytest as _pytest
     exit_code = _pytest.main([__file__, "-q"])
     if exit_code == 0:
-        print("\nAll tests passed 🎉")
+        print("\nAll tests passed ")
     sys.exit(exit_code)
