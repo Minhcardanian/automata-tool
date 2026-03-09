@@ -4,11 +4,6 @@ from dfa.dfa import DFA
 from nfa.nfa import EPSILON, NFA
 
 
-def epsilon_closure(nfa: NFA, states: set[str]) -> set[str]:
-    """Backward-compatible wrapper around NFA-owned epsilon-closure."""
-    return nfa.epsilon_closure(states)
-
-
 def move(nfa: NFA, states: set[str], symbol: str) -> set[str]:
     result: set[str] = set()
     for state in states:
